@@ -7,6 +7,7 @@ async function bootstrap() {
 
   app.enableCors();
   app.use(morgan('dev'));
+  app.setGlobalPrefix('api/v2');
 
   await app.listen(3000);
   console.log(`Server running on -----> ${await app.getUrl()}`);
