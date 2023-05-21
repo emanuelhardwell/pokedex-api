@@ -25,13 +25,7 @@ export class PokemonService {
 
       return pokemon;
     } catch (error) {
-      // console.log(error);
-      if (error.code === 11000) {
-        throw new BadRequestException(
-          `Ya existe un ${JSON.stringify(error.keyValue)} en la BD`,
-        );
-      }
-      throw new InternalServerErrorException('Error en el servidor');
+      this.handleError(error);
     }
   }
 
@@ -85,17 +79,21 @@ export class PokemonService {
 
       // return pokemonDB;
     } catch (error) {
-      console.log(error.message);
-      if (error.code === 11000) {
-        throw new BadRequestException(
-          `Ya existe un ${JSON.stringify(error.keyValue)} en la BD`,
-        );
-      }
-      throw new InternalServerErrorException('Error en el servidor');
+      this.handleError(error);
     }
   }
 
   remove(id: number) {
     return `This action removes a #${id} pokemon`;
+  }
+
+  private handleError(error: any) {
+    console.log(error.message);
+    if (error.code === 11000) {
+      throw new BadRequestException(
+        `Ya existe un ${JSON.stringify(error.keyValue)} en la BD`,
+      );
+    }
+    throw new InternalServerErrorException('Error en el servidor');
   }
 }
