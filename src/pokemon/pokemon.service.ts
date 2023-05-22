@@ -83,8 +83,21 @@ export class PokemonService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} pokemon`;
+  async remove(id: string) {
+    // const pokemon = await this.findOne(id);
+    // await pokemon.deleteOne();
+
+    // const pokemon = await this.pokemonModel.findByIdAndDelete(id);
+    // console.log(pokemon);
+
+    const pokemon = await this.pokemonModel.deleteOne({ _id: id });
+    console.log(pokemon);
+
+    if (pokemon.deletedCount === 0) {
+      throw new BadRequestException(`El pokemon con id -${id}- no existe`);
+    }
+
+    return;
   }
 
   private handleError(error: any) {
