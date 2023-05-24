@@ -1,10 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import { PokemonRes } from './interfaces/pokemon-res.interface';
+import { Model } from 'mongoose';
+import { Pokemon } from 'src/pokemon/entities/pokemon.entity';
+import { InjectModel } from '@nestjs/mongoose';
 
 @Injectable()
 export class SeedService {
   private readonly axiosInstance: AxiosInstance = axios;
+
+  constructor(
+    @InjectModel(Pokemon.name)
+    private readonly pokemonModel: Model<Pokemon>,
+  ) {}
 
   async executeSeed() {
     // const res = await this.axiosInstance.get(
@@ -27,12 +35,15 @@ export class SeedService {
 
     let data = res.data.results;
 
-    data.forEach((pokemon) => {
-      // console.log(pokemon);
+    data.forEach(async (pokemon) => {
       const separateArray = pokemon.url.split('/');
       const no = +separateArray[separateArray.length - 2];
 
-      console.log({ name: pokemon.name, no });
+      // console.log({ name: pokemon.name, no });
+      const pokemonSaved = await this.pokemonModel.create({
+        name: pokemon.name,
+        no,
+      });
     });
 
     return `seed executed!!`;
