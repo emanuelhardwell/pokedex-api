@@ -35,17 +35,37 @@ export class SeedService {
 
     let data = res.data.results;
 
+    // FORMA 2
+    // data.forEach(async (pokemon) => {
+    //   const separateArray = pokemon.url.split('/');
+    //   const no = +separateArray[separateArray.length - 2];
+
+    //   // console.log({ name: pokemon.name, no });
+    //   const pokemonSaved = await this.pokemonModel.create({
+    //     name: pokemon.name,
+    //     no,
+    //   });
+    // });
+
+    await this.pokemonModel.deleteMany(); // borrar la colección
+
+    // FORMA 3
+    const pokemonArrayPromises = [];
+
     data.forEach(async (pokemon) => {
       const separateArray = pokemon.url.split('/');
       const no = +separateArray[separateArray.length - 2];
 
-      // console.log({ name: pokemon.name, no });
-      const pokemonSaved = await this.pokemonModel.create({
-        name: pokemon.name,
-        no,
-      });
+      pokemonArrayPromises.push(
+        this.pokemonModel.create({
+          name: pokemon.name,
+          no,
+        }),
+      );
     });
 
-    return `seed executed!!`;
+    const pokemonSaved = await Promise.all(pokemonArrayPromises);
+
+    return { msg: `seed executed!!`, data: pokemonSaved };
   }
 }
