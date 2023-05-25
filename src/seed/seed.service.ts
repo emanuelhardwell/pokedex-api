@@ -30,7 +30,7 @@ export class SeedService {
     // // console.log(newPokemons);
 
     const res = await this.axiosInstance.get<PokemonRes>(
-      'https://pokeapi.co/api/v2/pokemon?limit=10',
+      'https://pokeapi.co/api/v2/pokemon?limit=100',
     );
 
     let data = res.data.results;
@@ -50,21 +50,36 @@ export class SeedService {
     await this.pokemonModel.deleteMany(); // borrar la colección
 
     // FORMA 3
-    const pokemonArrayPromises = [];
+    // const pokemonArrayPromises = [];
+
+    // data.forEach(async (pokemon) => {
+    //   const separateArray = pokemon.url.split('/');
+    //   const no = +separateArray[separateArray.length - 2];
+
+    //   pokemonArrayPromises.push(
+    //     this.pokemonModel.create({
+    //       name: pokemon.name,
+    //       no,
+    //     }),
+    //   );
+    // });
+
+    // const pokemonSaved = await Promise.all(pokemonArrayPromises);
+
+    // FORMA 4
+    const pokemonArray = [];
 
     data.forEach(async (pokemon) => {
       const separateArray = pokemon.url.split('/');
       const no = +separateArray[separateArray.length - 2];
 
-      pokemonArrayPromises.push(
-        this.pokemonModel.create({
-          name: pokemon.name,
-          no,
-        }),
-      );
+      pokemonArray.push({
+        name: pokemon.name,
+        no,
+      });
     });
 
-    const pokemonSaved = await Promise.all(pokemonArrayPromises);
+    const pokemonSaved = await this.pokemonModel.insertMany(pokemonArray);
 
     return { msg: `seed executed!!`, data: pokemonSaved };
   }
