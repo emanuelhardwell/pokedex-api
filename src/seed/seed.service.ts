@@ -1,17 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import axios, { AxiosInstance } from 'axios';
+// import axios, { AxiosInstance } from 'axios';
 import { PokemonRes } from './interfaces/pokemon-res.interface';
 import { Model } from 'mongoose';
 import { Pokemon } from 'src/pokemon/entities/pokemon.entity';
 import { InjectModel } from '@nestjs/mongoose';
+import { AxiosAdapter } from 'src/common/adapters/axios.adapter';
 
 @Injectable()
 export class SeedService {
-  private readonly axiosInstance: AxiosInstance = axios;
+  // private readonly axiosInstance: AxiosInstance = axios;
 
   constructor(
     @InjectModel(Pokemon.name)
     private readonly pokemonModel: Model<Pokemon>,
+
+    private readonly axiosInstance: AxiosAdapter,
   ) {}
 
   async executeSeed() {
@@ -33,7 +36,8 @@ export class SeedService {
       'https://pokeapi.co/api/v2/pokemon?limit=100',
     );
 
-    let data = res.data.results;
+    // let data = res.data.results;
+    let data = res.results;
 
     // FORMA 2
     // data.forEach(async (pokemon) => {
