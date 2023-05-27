@@ -7,11 +7,13 @@ import { CommonModule } from './common/common.module';
 import { SeedModule } from './seed/seed.module';
 import { ConfigModule } from '@nestjs/config';
 import { envConfig } from './config/env.config';
+import { envValidation } from './config/env.validation';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [envConfig],
+      validationSchema: envValidation,
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
